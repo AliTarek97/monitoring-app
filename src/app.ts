@@ -39,6 +39,8 @@ app.use(lusca.xssProtection(true));
 /**
  * Primary app routes.
  */
-app.get("/api", apiController.getApi);
+app.post("/api/user/signup", apiController.signUp);
+app.post("/api/user/login", apiController.login);
+app.get("/api/user/verify/:id/:code",apiController.verifyUser);
 
 export default app;
