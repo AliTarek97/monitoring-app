@@ -2,13 +2,16 @@
 
 import { Response, Request, NextFunction } from "express";
 import { VerificationCode } from "../models/verificationCode";
-import {User, validate} from "../models/User";
+import {User, UserDocument, validate} from "../models/User";
 import crypto from "crypto";
 import bcrypt from "bcryptjs";
+import jwt from "jsonwebtoken";
 import { sendEmail } from "../util/sendEmail";
 import { createToken } from "../util/jwtGenerator";
 
-
+export interface AuthenticatedRequest extends Request{
+    user: UserDocument;
+}
 /**
  * List of API examples.
  * @route GET /api
@@ -74,5 +77,22 @@ export const login = async (req: Request, res: Response) => {
         res.send(user);
     } catch (error) {
         res.status(400).send("An error occured");
+    }
+};
+// TODO remove hard coded string
+export const auth = async (req:AuthenticatedRequest , res:Response , next:NextFunction) => {
+    try {
+        const token = req.header("Authorization").replace("Bearer ", "");
+        const decoded = jwt.verify(token, "ThisIsAJwtSecret") as { id : string };
+        const user = await User.findById(decoded.id);
+
+        if(!user){
+            throw new Error("You are not logged in.");
+        }
+
+        req.user = user;
+        next();
+    } catch (error) {
+        res.status(401).send({error:"please login."});
     }
 };
