@@ -1,3 +1,4 @@
+import { Map } from "bson";
 import mongoose, { Schema } from "mongoose";
 
 type AuthenticationHeader = {
@@ -5,10 +6,10 @@ type AuthenticationHeader = {
     password: string
 }
 
-type HTTPHeader = {
-    key: string,
-    value: string
-}
+// type HTTPHeader = {
+//     key: string,
+//     value: string
+// }
 
 type Assert = {
     statusCode: number
@@ -25,7 +26,7 @@ export type CheckDocument = mongoose.Document & {
     interval?: number,
     threshold?: number,
     authentication?: AuthenticationHeader,
-    httpHeaders?: [HTTPHeader],
+    httpHeaders?: mongoose.SchemaDefinitionProperty<Map<string, string>>,
     assert?: Assert,
     tags?: [string],
     ignoreSSL: boolean
@@ -48,7 +49,10 @@ const checkSchema = new mongoose.Schema<CheckDocument>(
         interval: {type: Number, default: 10*60},
         threshold: {type: Number, default: 1},
         authentication: {username: String, password: String},
-        httpHeaders:[{key: String, value: String}],
+        httpHeaders:{
+            type: Map,
+            of: String
+        },
         assert: {statusCode: Number},
         tags: [String],
         ignoreSSL: {type: Boolean, required: true}
