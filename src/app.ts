@@ -9,6 +9,7 @@ import { MONGODB_URI} from "./util/secrets";
 
 // Controllers (route handlers)
 import * as apiController from "./controllers/api";
+import * as checkController from "./controllers/checkController";
 
 // // API keys and Passport configuration
 // import * as passportConfig from "./config/passport";
@@ -42,5 +43,7 @@ app.use(lusca.xssProtection(true));
 app.post("/api/user/signup", apiController.signUp);
 app.post("/api/user/login", apiController.login);
 app.get("/api/user/verify/:id/:code",apiController.verifyUser);
+
+app.post("/api/check/create", apiController.auth, checkController.createCheck);
 
 export default app;
