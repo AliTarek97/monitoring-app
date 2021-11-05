@@ -44,6 +44,16 @@ app.post("/api/user/signup", apiController.signUp);
 app.post("/api/user/login", apiController.login);
 app.get("/api/user/verify/:id/:code",apiController.verifyUser);
 
-app.post("/api/check/create", apiController.auth, checkController.createCheck);
+app.post("/api/check", apiController.auth, checkController.createCheck);
+// app.patch("/api/check/:checkId", apiController.auth, checkController.editCheck);
+app.delete("/api/check/:checkId", apiController.auth, checkController.deleteCheck);
+
+// const checks = check.getAll
+// checks.array.forEach(element => {
+//     cronJob(interval, () => {
+//         const response = fetch(url)
+//         write response in db
+//     })
+// });
 
 export default app;

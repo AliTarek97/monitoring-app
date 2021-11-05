@@ -5,12 +5,6 @@ type AuthenticationHeader = {
     username: string,
     password: string
 }
-
-// type HTTPHeader = {
-//     key: string,
-//     value: string
-// }
-
 type Assert = {
     statusCode: number
 }
