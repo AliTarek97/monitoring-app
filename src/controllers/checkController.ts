@@ -1,11 +1,14 @@
 "use strict";
 
-import { Response, Request, NextFunction } from "express";
+import { Response } from "express";
 import { AuthenticatedRequest } from "./api";
-import { Check, CheckDocument } from "../models/check";
+import { Check, CheckDocument, validate } from "../models/check";
 export const createCheck = async (req: AuthenticatedRequest, res: Response) => {
   try {
     // TODO validate on coming request body
+    const {error} = validate(req.body);
+    if(error) return res.status(400).send(error.details[0].message);
+    
     const createdCheck: CheckDocument = await new Check({
       userId: req.user._id,
       ...req.body,

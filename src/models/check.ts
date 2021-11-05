@@ -1,6 +1,6 @@
 import { Map } from "bson";
 import mongoose, { Schema } from "mongoose";
-
+import Joi from "joi";
 type AuthenticationHeader = {
     username: string,
     password: string
@@ -55,6 +55,16 @@ const checkSchema = new mongoose.Schema<CheckDocument>(
 );
 
 export const Check = mongoose.model<CheckDocument>("Check", checkSchema);
+
+export const validate = (check: any) => {
+    const schema = Joi.object({
+      name: Joi.string().required(),
+      url: Joi.string().required(),
+      protocol: Joi.string().valid(...["HTTP", "HTTPS", "TCP"]).required(),
+      ignoreSSL: Joi.boolean().required(),
+    }).options({allowUnknown:true});
+    return schema.validate(check);
+  };
 
 // export const validate = (user: any) => {
 //     const schema = Joi.object({
