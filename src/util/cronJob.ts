@@ -51,3 +51,22 @@ export const startCronJob = async () => {
 
     Object.assign(global, {jobMapper: jobMapper});
 };
+
+export const resumeJob = (check:CheckDocument) => {
+    const job:CronJob = (global as any).jobMapper[check.id];
+    job.start();
+};
+
+export const stopJob = (check:CheckDocument) => {
+    const job:CronJob = (global as any).jobMapper[check.id];
+    console.log((global as any).jobMapper[check.id]);
+    job.stop();
+};
+
+export const assignJobToCheck = (check:CheckDocument, job: CronJob) => {
+    (global as any).jobMapper[check.id] = job;
+};
+
+export const removeJobAssignmentToCheck = (check:CheckDocument) => {
+    delete (global as any).jobMapper[check.id];
+};

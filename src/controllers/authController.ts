@@ -1,18 +1,13 @@
 "use strict";
 
-import { Response, Request, NextFunction } from "express";
+import { Response, Request } from "express";
 import { VerificationCode } from "../models/verificationCode";
-import {User, UserDocument, validate} from "../models/User";
+import {User} from "../models/User";
 import crypto from "crypto";
 import bcrypt from "bcryptjs";
 import { sendEmail } from "../util/sendEmail";
 import { createToken } from "../util/jwtGenerator";
 
-
-/**
- * List of API examples.
- * @route GET /api
- */
 export const signUp = async (req: Request, res: Response) => {
     try {
         // const {error} = validate(req.body);
