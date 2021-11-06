@@ -10,6 +10,7 @@ import { MONGODB_URI} from "./util/secrets";
 // Controllers (route handlers)
 import * as apiController from "./controllers/api";
 import * as checkController from "./controllers/checkController";
+import { auth } from "./middlewares/auth";
 
 
 import { startCronJob } from "./util/cronJob";
@@ -57,19 +58,11 @@ app.post("/api/user/signup", apiController.signUp);
 app.post("/api/user/login", apiController.login);
 app.get("/api/user/verify/:id/:code",apiController.verifyUser);
 
-app.post("/api/check", apiController.auth, checkController.createCheck);
+app.post("/api/check", auth, checkController.createCheck);
 // app.patch("/api/check/:checkId", apiController.auth, checkController.editCheck);
-app.delete("/api/check/:checkId", apiController.auth, checkController.deleteCheck);
+app.delete("/api/check/:checkId", auth, checkController.deleteCheck);
 
-app.get("/api/check/:checkId/resume", apiController.auth, checkController.resumeCronJob);
-app.get("/api/check/:checkId/pause", apiController.auth, checkController.pauseCronJob);
-
-// const checks = check.getAll
-// checks.array.forEach(element => {
-//     cronJob(interval, () => {
-//         const response = fetch(url)
-//         write response in db
-//     })
-// });
+app.get("/api/check/:checkId/resume", auth, checkController.resumeCronJob);
+app.get("/api/check/:checkId/pause", auth, checkController.pauseCronJob);
 
 export default app;

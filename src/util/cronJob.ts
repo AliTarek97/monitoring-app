@@ -1,6 +1,27 @@
 import { CronJob } from "cron";
 import axios from "axios";
-import { Check } from "../models/check";
+import { Check, CheckDocument } from "../models/check";
+
+export const instantiateCronJob = (check: CheckDocument) => {
+    const job = new CronJob(
+        "*/5 * * * * *",
+        async function() {
+            try {
+                console.log(`You will see this message every ${check.interval} seconds`);
+                const url = `${check.protocol}://${check.url}`;
+                console.log(url);
+                const response = await axios.get(url);
+                console.log(response.status);
+            } catch (error) {
+                console.log(error.message);
+            }
+        },
+        null,
+        true,
+      );
+     return job;
+};
+
 
 export const startCronJob = async () => {
     

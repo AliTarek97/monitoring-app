@@ -1,10 +1,10 @@
 "use strict";
 
 import { Response } from "express";
-import { AuthenticatedRequest } from "./api";
+import { AuthenticatedRequest } from "../middlewares/auth";
 import { Check, CheckDocument, validate } from "../models/check";
 import { CronJob } from "cron";
-import axios from "axios";
+import { instantiateCronJob } from "../util/cronJob";
 export const createCheck = async (req: AuthenticatedRequest, res: Response) => {
   try {
     // TODO validate on coming request body
@@ -16,22 +16,7 @@ export const createCheck = async (req: AuthenticatedRequest, res: Response) => {
       ...req.body,
     }).save();
 
-    const job = new CronJob(
-      "*/5 * * * * *",
-      async function() {
-          try {
-              console.log(`You will see this message every ${createdCheck.interval} seconds`);
-              const url = `${createdCheck.protocol}://${createdCheck.url}`;
-              console.log(url);
-              const response = await axios.get(url);
-              console.log(response.status);
-          } catch (error) {
-              console.log(error.message);
-          }
-      },
-      null,
-      true,
-    );
+    const job = instantiateCronJob(createdCheck);
     (global as any).jobMapper[createdCheck.id] = job;
     
     res.status(201).send(createdCheck);
@@ -63,6 +48,7 @@ export const deleteCheck = async (req: AuthenticatedRequest, res: Response) => {
 export const resumeCronJob = async (req: AuthenticatedRequest, res: Response) => {
   
   const check = await Check.findOne({userId: req.user.id, _id: req.params.checkId});
+  if(!check) return res.status(400).send(`check with id ${req.params.checkId} is not found`);
   
   const job:CronJob = (global as any).jobMapper[check.id];
   job.start();
@@ -72,6 +58,7 @@ export const resumeCronJob = async (req: AuthenticatedRequest, res: Response) =>
 export const pauseCronJob = async (req: AuthenticatedRequest, res: Response) => {
     
   const check = await Check.findOne({userId: req.user.id, _id: req.params.checkId});
+  if(!check) return res.status(400).send(`check with id ${req.params.checkId} is not found`);
   
   const job:CronJob = (global as any).jobMapper[check.id];
   console.log((global as any).jobMapper[check.id]);
