@@ -9,44 +9,23 @@ export const startCronJob = async () => {
         
     for (const check of checks) {
         console.log(check.url);
-        // console.log((global as any).jobMapper[check.id]);
-        if(typeof (global as any).jobMapper === "undefined"){
-            const job = new CronJob(
-                "*/5 * * * * *",
-                async function() {
-                    try {
-                        console.log(`You will see this message every ${check.interval} seconds`);
-                        const url = `${check.protocol}://${check.url}`;
-                        console.log(url);
-                        const response = await axios.get(url);
-                        console.log(response.status);
-                    } catch (error) {
-                        console.log(error.message);
-                    }
-                },
-                null,
-                true,
-            );
-            jobMapper[`${check._id}`] = job;
-        } else if(typeof (global as any).jobMapper[check.id] === "undefined") {
-            const job = new CronJob(
-                "*/5 * * * * *",
-                async function() {
-                    try {
-                        console.log(`You will see this message every ${check.interval} seconds`);
-                        const url = `${check.protocol}://${check.url}`;
-                        console.log(url);
-                        const response = await axios.get(url);
-                        console.log(response.status);
-                    } catch (error) {
-                        console.log(error.message);
-                    }
-                },
-                null,
-                true,
-            );
-            jobMapper[`${check._id}`] = job;
-        }
+        const job = new CronJob(
+            "*/5 * * * * *",
+            async function() {
+                try {
+                    console.log(`You will see this message every ${check.interval} seconds`);
+                    const url = `${check.protocol}://${check.url}`;
+                    console.log(url);
+                    const response = await axios.get(url);
+                    console.log(response.status);
+                } catch (error) {
+                    console.log(error.message);
+                }
+            },
+            null,
+            true,
+        );
+        jobMapper[`${check._id}`] = job;
     }
 
     Object.assign(global, {jobMapper: jobMapper});

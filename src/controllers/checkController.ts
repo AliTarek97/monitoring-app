@@ -4,7 +4,7 @@ import { Response } from "express";
 import { AuthenticatedRequest } from "./api";
 import { Check, CheckDocument, validate } from "../models/check";
 import { CronJob } from "cron";
-import { startCronJob } from "../util/cronJob";
+import axios from "axios";
 export const createCheck = async (req: AuthenticatedRequest, res: Response) => {
   try {
     // TODO validate on coming request body
@@ -16,8 +16,24 @@ export const createCheck = async (req: AuthenticatedRequest, res: Response) => {
       ...req.body,
     }).save();
 
-    await startCronJob();
-
+    const job = new CronJob(
+      "*/5 * * * * *",
+      async function() {
+          try {
+              console.log(`You will see this message every ${createdCheck.interval} seconds`);
+              const url = `${createdCheck.protocol}://${createdCheck.url}`;
+              console.log(url);
+              const response = await axios.get(url);
+              console.log(response.status);
+          } catch (error) {
+              console.log(error.message);
+          }
+      },
+      null,
+      true,
+    );
+    (global as any).jobMapper[createdCheck.id] = job;
+    
     res.status(201).send(createdCheck);
   } catch (error) {
     res.status(400).send("An error occured");
