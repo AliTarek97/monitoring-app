@@ -11,6 +11,8 @@ import { MONGODB_URI} from "./util/secrets";
 import * as apiController from "./controllers/api";
 import * as checkController from "./controllers/checkController";
 
+
+import { startCronJob } from "./util/cronJob";
 // // API keys and Passport configuration
 // import * as passportConfig from "./config/passport";
 
@@ -21,12 +23,23 @@ const app = express();
 const mongoUrl = MONGODB_URI;
 mongoose.Promise = bluebird;
 
-mongoose.connect(mongoUrl).then(
-    () => { /** ready to use. The `mongoose.connect()` promise resolves to undefined. */ },
-).catch(err => {
-    console.log(`MongoDB connection error. Please make sure MongoDB is running. ${err}`);
-    // process.exit();
-});
+// mongoose.connect(mongoUrl).then(
+//     () => { /** ready to use. The `mongoose.connect()` promise resolves to undefined. */
+//         console.log("Connected to MongoDB");
+//     },
+// ).catch(err => {
+//     console.log(`MongoDB connection error. Please make sure MongoDB is running. ${err}`);
+//     // process.exit();
+// });
+
+(async ()=>{
+    try {
+        await mongoose.connect(mongoUrl);
+        await startCronJob();
+    } catch (error) {
+        console.log(error.message);
+    }
+})();
 
 // Express configuration
 app.set("port", process.env.PORT || 3000);
@@ -47,6 +60,9 @@ app.get("/api/user/verify/:id/:code",apiController.verifyUser);
 app.post("/api/check", apiController.auth, checkController.createCheck);
 // app.patch("/api/check/:checkId", apiController.auth, checkController.editCheck);
 app.delete("/api/check/:checkId", apiController.auth, checkController.deleteCheck);
+
+app.get("/api/check/:checkId/resume", apiController.auth, checkController.resumeCronJob);
+app.get("/api/check/:checkId/pause", apiController.auth, checkController.pauseCronJob);
 
 // const checks = check.getAll
 // checks.array.forEach(element => {
