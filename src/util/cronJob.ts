@@ -1,6 +1,7 @@
 import { CronJob } from "cron";
 import axios from "axios";
 import { Check, CheckDocument } from "../models/check";
+import { bindUrl } from "./bindUrl";
 
 export const instantiateCronJob = (check: CheckDocument) => {
     const job = new CronJob(
@@ -8,7 +9,7 @@ export const instantiateCronJob = (check: CheckDocument) => {
         async function() {
             try {
                 console.log(`You will see this message every ${check.interval} seconds`);
-                const url = `${check.protocol}://${check.url}`;
+                const url = bindUrl(check);
                 console.log(url);
                 const response = await axios.get(url);
                 console.log(response.status);
@@ -35,7 +36,7 @@ export const startCronJob = async () => {
             async function() {
                 try {
                     console.log(`You will see this message every ${check.interval} seconds`);
-                    const url = `${check.protocol}://${check.url}`;
+                    const url = bindUrl(check);
                     console.log(url);
                     const response = await axios.get(url);
                     console.log(response.status);
