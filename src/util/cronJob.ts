@@ -4,6 +4,7 @@ import { Check, CheckDocument } from "../models/check";
 import { bindUrl } from "./bindUrl";
 import { convertMapToObject } from "./convertMapToRecord";
 import axiosTime from "axios-time";
+import { PollingLogs } from "../models/pollingLogs";
 axiosTime(axios);
 export const instantiateCronJob = (check: CheckDocument) => {
   const job = new CronJob(
@@ -18,6 +19,13 @@ export const instantiateCronJob = (check: CheckDocument) => {
         const response:any = await axios.get(url,{timeout: parseInt(`${check.timeout}`,10) / 10, headers: convertMapToObject(check.httpHeaders as Map<string,string>)});
         console.log(response.status);
         console.log(response.timing.elapsedTime);
+        const urlStatus:boolean = (response.status / 100 == 2);
+
+        await new PollingLogs({
+          url,
+          status: urlStatus,
+          elapsedTime: response.timings.elapsedTime
+        }).save();
       } catch (error) {
         console.log(error.message);
       }
@@ -51,6 +59,13 @@ export const startCronJob = async () => {
           });
           console.log(response.status);
           console.log(response.timings.elapsedTime);
+          const urlStatus:boolean = (response.status / 100 == 2);
+
+          await new PollingLogs({
+            url,
+            status: urlStatus,
+            elapsedTime: response.timings.elapsedTime
+          }).save();
         } catch (error) {
           console.log(error.message);
         }
