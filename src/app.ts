@@ -10,6 +10,7 @@ import { MONGODB_URI} from "./util/secrets";
 // Controllers (route handlers)
 import * as authController from "./controllers/authController";
 import * as checkController from "./controllers/checkController";
+import * as reportController from "./controllers/reportController";
 import { auth } from "./middlewares/auth";
 
 
@@ -52,5 +53,7 @@ app.delete("/api/check/:checkId", auth, checkController.deleteCheck);
 
 app.get("/api/check/:checkId/resume", auth, checkController.resumeCronJob);
 app.get("/api/check/:checkId/pause", auth, checkController.pauseCronJob);
+
+app.get("/api/report/:checkId", auth, reportController.createReport);
 
 export default app;

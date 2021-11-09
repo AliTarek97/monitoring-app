@@ -65,15 +65,3 @@ export const validate = (check: any) => {
     }).options({allowUnknown:true});
     return schema.validate(check);
   };
-
-// export const validate = (user: any) => {
-//     const schema = Joi.object({
-//       email: Joi.string().email().required(),
-//     });
-//     return schema.validate(user);
-//   };
-// TODO check out what is the problem in exporting in that way
-//   module.exports = {
-//       User,
-//       validate
-//   };
