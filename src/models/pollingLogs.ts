@@ -8,7 +8,7 @@ export type pollingLogsDocument = mongoose.Document & {
 
 const pollingLogsSchema = new mongoose.Schema<pollingLogsDocument>(
     {
-        url: {type: String, required: true},
+        url: {type: String, index: true,required: true},
         status: {type: Boolean, required: true},
         elapsedTime: {type: Number, required: true}
     },
