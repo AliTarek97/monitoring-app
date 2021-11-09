@@ -1,6 +1,6 @@
-import mongoose from "mongoose";
 import bcrypt from "bcryptjs";
 import Joi from "joi";
+import mongoose from "mongoose";
 export type UserDocument = mongoose.Document & {
     email: string;
     password: string;
@@ -29,7 +29,7 @@ userSchema.pre("save", function save(next) {
     if (!user.isModified("password")) { return next(); }
     bcrypt.genSalt(10, async (err, salt) => {
         if (err) { return next(err); }
-        const hashedPassword:string = await bcrypt.hash(user.password, salt);
+        const hashedPassword: string = await bcrypt.hash(user.password, salt);
         if (err) { return next(err); }
         user.password = hashedPassword;
         next();
@@ -39,10 +39,10 @@ export const User = mongoose.model<UserDocument>("User", userSchema);
 
 export const validate = (user: any) => {
     const schema = Joi.object({
-      email: Joi.string().email().required(),
+        email: Joi.string().email().required(),
     });
     return schema.validate(user);
-  };
+};
 // TODO check out what is the problem in exporting in that way
 //   module.exports = {
 //       User,

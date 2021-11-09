@@ -1,20 +1,21 @@
-import express from "express";
-import compression from "compression";  // compresses requests
-import bodyParser from "body-parser";
-import lusca from "lusca";
-import flash from "express-flash";
-import mongoose from "mongoose";
 import bluebird from "bluebird";
-import { MONGODB_URI} from "./util/secrets";
-
+import bodyParser from "body-parser";
+import compression from "compression"; // compresses requests
+import express from "express";
+import flash from "express-flash";
+import lusca from "lusca";
+import mongoose from "mongoose";
 // Controllers (route handlers)
 import * as authController from "./controllers/authController";
 import * as checkController from "./controllers/checkController";
 import * as reportController from "./controllers/reportController";
 import { auth } from "./middlewares/auth";
-
-
 import { startCronJob } from "./util/cronJob";
+import { MONGODB_URI } from "./util/secrets";
+
+
+
+
 
 const app = express();
 
@@ -22,7 +23,7 @@ const app = express();
 const mongoUrl = MONGODB_URI;
 mongoose.Promise = bluebird;
 
-(async ()=>{
+(async () => {
     try {
         await mongoose.connect(mongoUrl);
         await startCronJob();
@@ -45,7 +46,7 @@ app.use(lusca.xssProtection(true));
  */
 app.post("/api/user/signup", authController.signUp);
 app.post("/api/user/login", authController.login);
-app.get("/api/user/verify/:id/:code",authController.verifyUser);
+app.get("/api/user/verify/:id/:code", authController.verifyUser);
 
 app.post("/api/check", auth, checkController.createCheck);
 // app.patch("/api/check/:checkId", authController.auth, checkController.editCheck);

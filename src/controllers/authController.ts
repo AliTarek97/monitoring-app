@@ -1,28 +1,28 @@
 "use strict";
 
-import { Response, Request } from "express";
-import { VerificationCode } from "../models/verificationCode";
-import {User} from "../models/User";
-import crypto from "crypto";
 import bcrypt from "bcryptjs";
-import { sendEmail } from "../util/sendEmail";
+import crypto from "crypto";
+import { Request, Response } from "express";
+import { User } from "../models/User";
+import { VerificationCode } from "../models/verificationCode";
 import { createToken } from "../util/jwtGenerator";
+import { sendEmail } from "../util/sendEmail";
 
 export const signUp = async (req: Request, res: Response) => {
     try {
         // const {error} = validate(req.body);
         // if(error) return res.status(400).send(error.details[0].message);
 
-        let user = await User.findOne({email: req.body.email});
-        if (user)  return res.status(400).send("User with given email already exist!");
+        let user = await User.findOne({ email: req.body.email });
+        if (user) return res.status(400).send("User with given email already exist!");
 
         user = await new User({
             email: req.body.email,
             password: req.body.password
-          }).save();
+        }).save();
 
         const verificationCode = await new VerificationCode({
-            userId : user._id,
+            userId: user._id,
             code: crypto.randomBytes(32).toString("hex")
         }).save();
 
@@ -43,7 +43,7 @@ export const verifyUser = async (req: Request, res: Response) => {
         const code = await VerificationCode.findOne({
             userId: user._id,
             code: req.params.code,
-          });
+        });
         if (!code) return res.status(400).send("Invalid link2");
 
         await User.updateOne({ _id: user._id, status: "Verified" });
@@ -59,10 +59,10 @@ export const login = async (req: Request, res: Response) => {
         const user = await User.findOne({ email: req.body.email.toLowerCase() });
         if (!user) return res.status(400).send("User not found");
 
-        if(user.status === "Pending") return res.status(400).send("Please verify your email first");
+        if (user.status === "Pending") return res.status(400).send("Please verify your email first");
 
         const isPasswordMatching = await bcrypt.compare(req.body.password, user.password);
-        if(!isPasswordMatching) return res.status(400).send("Incorrect password");
+        if (!isPasswordMatching) return res.status(400).send("Incorrect password");
 
         const jsonWebToken = createToken(user);
         res.setHeader("www-authenticate", jsonWebToken);

@@ -1,6 +1,6 @@
 import { Map } from "bson";
-import mongoose, { Schema } from "mongoose";
 import Joi from "joi";
+import mongoose, { Schema } from "mongoose";
 type AuthenticationHeader = {
     username: string,
     password: string
@@ -28,9 +28,9 @@ export type CheckDocument = mongoose.Document & {
 
 const checkSchema = new mongoose.Schema<CheckDocument>(
     {
-        userId: {type: Schema.Types.ObjectId, ref: "User"},
-        name: {type: String, required: true},
-        url: {type: String, required: true},
+        userId: { type: Schema.Types.ObjectId, ref: "User" },
+        name: { type: String, required: true },
+        url: { type: String, required: true },
         protocol: {
             type: String,
             enum: ["HTTP", "HTTPS", "TCP"],
@@ -39,17 +39,17 @@ const checkSchema = new mongoose.Schema<CheckDocument>(
         path: String,
         port: Number,
         webhook: String,
-        timeout: {type: Number, default: 5},
-        interval: {type: Number, default: 10*60},
-        threshold: {type: Number, default: 1},
-        authentication: {username: String, password: String},
-        httpHeaders:{
+        timeout: { type: Number, default: 5 },
+        interval: { type: Number, default: 10 * 60 },
+        threshold: { type: Number, default: 1 },
+        authentication: { username: String, password: String },
+        httpHeaders: {
             type: Map,
             of: String
         },
-        assert: {statusCode: Number},
+        assert: { statusCode: Number },
         tags: [String],
-        ignoreSSL: {type: Boolean, required: true}
+        ignoreSSL: { type: Boolean, required: true }
     },
     { timestamps: true },
 );
@@ -58,10 +58,10 @@ export const Check = mongoose.model<CheckDocument>("Check", checkSchema);
 
 export const validate = (check: any) => {
     const schema = Joi.object({
-      name: Joi.string().required(),
-      url: Joi.string().required(),
-      protocol: Joi.string().valid(...["HTTP", "HTTPS", "TCP"]).required(),
-      ignoreSSL: Joi.boolean().required(),
-    }).options({allowUnknown:true});
+        name: Joi.string().required(),
+        url: Joi.string().required(),
+        protocol: Joi.string().valid(...["HTTP", "HTTPS", "TCP"]).required(),
+        ignoreSSL: Joi.boolean().required(),
+    }).options({ allowUnknown: true });
     return schema.validate(check);
-  };
+};
