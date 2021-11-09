@@ -7,18 +7,18 @@ export type reportDocument = mongoose.Document & {
     uptime: number,
     responseTime: number,
     history: string
-    
+
 };
 
 const reportsSchema = new mongoose.Schema<reportDocument>(
     {
-        status: {type: String, required: true},
-        availability: {type: Number, required: true},
-        outages: {type: Number, required: true},
-        downtime: {type: Number, required: true},
-        uptime: {type: Number, required: true},
-        responseTime: {type: Number, required: true},
-        history: {type: String}
+        status: { type: String, required: true },
+        availability: { type: Number, required: true },
+        outages: { type: Number, required: true },
+        downtime: { type: Number, required: true },
+        uptime: { type: Number, required: true },
+        responseTime: { type: Number, required: true },
+        history: { type: String }
     },
     { timestamps: true },
 );

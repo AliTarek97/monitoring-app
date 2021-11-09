@@ -5,12 +5,12 @@ export type verificationCodeDocument = mongoose.Document & {
 };
 
 const verificationCodeSchema = new mongoose.Schema<verificationCodeDocument>({
-        userId: { type: Schema.Types.ObjectId, ref:"User", required: true },
-        code: {
-            type: String,
-            required: true
-        },
+    userId: { type: Schema.Types.ObjectId, ref: "User", required: true },
+    code: {
+        type: String,
+        required: true
     },
+},
     { timestamps: true },
 );
 
