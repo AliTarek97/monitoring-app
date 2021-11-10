@@ -12,6 +12,7 @@ export const createReport = async (
     try {
         const { checkId } = req.params;
         const check = await Check.findById(checkId);
+        if (!check) return res.status(400).send("check is not found");
         const url = bindUrl(check);
 
         const status = (
